@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>myvue</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>  
+    <!-- 添加CDN依赖 -->
+  </head>
+  <style>
+  .class1{
+    background: #444;
+    color: #eee;
+  }
+
+  .active{
+    width: 100px;
+    height: 100px;
+    background: green;
+  }
+
+  .text-danger{
+    width: 50px;
+    height: 100px;
+    background: red;
+  }
+  </style>
+  <body>
+    <div id="app">
+      <!-- {{ }} 用于输出对象属性和函数返回值 -->
+      <p>{{msg}}</p>
+      <p>title: {{title}}</p>
+      <p>url: {{url}}</p>
+      <p>{{details()}}</p>  
+      <p v-if="seen">现在你看到我了</p>
+      <!-- v-if指令将根据表达式seen 的值（true或false）来决定是否插入p元素 -->
+      <div>
+        <label for="r1">修改颜色</label><input type="checkbox" v-model="use" id="r1">
+        <div v-bind:class="{'class1' : use}">123qwe</div>
+        <!-- v-bind 指令 判断use的值 如果为true使用class1类的样式 否则不使用该类 -->
+        <!-- 指令是带有v- 前缀的特殊属性 指令用于在表达式的值改变时将某些行为应用到DOM上 -->
+        <!-- v-bind:class 缩写 :class -->
+      </div>
+
+
+      <div>
+        <p>{{msg}}</p>
+        <button v-on:click="reverseMSg">反转字符串</button>
+        <!-- v-on 指令监听事件   v-on:click缩写 @click -->
+      </div>
+
+
+      <div>
+        <p>{{msg}}</p>
+        <input v-model="msg">
+        <!-- v-model 指令实现双向数据绑定 -->
+      </div>
+
+
+      <div>
+        <div v-if="Math.random() >0.5">sorry</div>
+        <!-- 随机生成一个数字 判断是否大于0.5 -->
+        <div v-else>not sorry</div>
+        <!-- 用 v-else 指令给 v-if 添加一个“else”块   还可以添加 v-else-if 指令-->
+      </div>
+
+
+      <div>
+        <ol>
+          <li v-for="site in sites">
+            {{site.name}}
+          </li>
+        </ol>
+        <!-- v-for 循环可以绑定数据到数组来渲染一个列表 -->
+      </div>
+
+
+      <div>
+        <ul>
+          <li v-for="value in object">
+            {{ value }}
+            <!-- 输出：菜鸟教程... -->
+          </li>
+          <!-- <li v-for="(value,key) in object">
+            {{key}} : {{ value }}
+            输出：name：菜鸟教程
+          </li>  -->
+          <!-- <li v-for="(value,key，index) in object">
+            {{ index }} . {{key}} : {{ value }}
+            输出：0.name：菜鸟教程
+          </li>  -->
+        </ul>
+        <!-- v-for 迭代对象 -->
+      </div>
+
+
+      <div>
+        <ul>
+          <li v-for="n in 10">
+            {{ n }}
+          </li>
+        </ul>
+        <!-- v-for 迭代整数 循环输出1到10 -->
+      </div>
+
+
+      <div>
+        <p style="font-size: 25px;">计数器：{{ counter }}</p>
+        <button @click="counter++" style="font-size: 25px;">点我</button>
+        <!-- 监听属性 使用watch实现计数器 -->
+      </div>
+
+
+      <div>
+        千米：<input type="text" v-model="km">
+        米：<input type="text" v-model="m">
+      </div>
+      <p id="info"></p>
+
+
+      <div>
+        <div v-bind:class="{ 'active' : isActive }"></div>
+        <!-- isActive 设置为true显示 设置为false则不显示 -->
+      </div>
+
+
+      <div>
+        <div v-bind:class="{ 'active': isActive, 'text-danger': hasError }"></div>
+        <!-- 前一个类的背景颜色会被后一个类的背景颜色覆盖 -->
+      </div>
+
+
+      <div>
+          <div v-bind:class="[errorClass,activeClass]"></div>
+          <!-- 把数组传给v-bind:class -->
+      </div>
+
+
+      <div>
+        <div v-bind:class="[errorClass, isActive ? activeClass : '' ]"></div>
+        <!-- errorClass 是始终存在的 isActive为true时添加activeClass类 -->
+      </div>
+
+
+      <div>
+        <div v-bind:style="{ color: activeColor,fontSize: fontSize+'px' }">菜鸟教程</div>
+        <!-- v-bind:style 可以直接设置样式 -->
+      </div>
+
+
+      <div>
+        <div v-bind:style="styleObject">菜鸟教程</div>
+        <!-- 直接绑定样式对象 -->
+      </div>
+
+
+      <div>
+        <div v-bind:style="[styleObject,overridingStyles]">菜鸟教程</div>
+        <!-- s使用数组将多个样式对象应用到元素上 -->
+      </div>
+
+
+      <div>
+        <button v-on:click=" say('hi') ">Say hi</button>
+        <button v-on:click=" say('what') ">Say what</button>
+        <!-- 将 hi 和 what 分别作为参数传到methods里 -->
+      </div>
+
+
+      <div>
+          <!-- .stop 阻止冒泡      .prevent 阻止默认事件   
+               .capture 阻止捕获   .self 只监听触发该元素的事件
+               .once 只触发一次    .left 左键事件
+               .right 右键事件     .middle 中间滚轮事件 -->
+
+        <a v-on:click.stop="doThis"></a>
+        <!-- 阻止单击事件冒泡 -->
+
+        <form v-on:submit.prevent="onSubmit"></form>
+        <!-- 提交事件不再重新加载页面 -->
+
+        <a v-on:click.stop.prevent="doThat"></a>
+        <!-- 修饰符可以串联 -->
+
+        <form v-on:submit.prevent></form>
+        <!-- 只有修饰符 -->
+
+        <div v-on:click.capture="doThis">...</div>
+        <!-- 添加事件监听器时使用事件捕获模式 -->
+
+        <div v-on:click.self="doThat">...</div>
+        <!-- 只当事件在该元素本身（而不是子元素）触发时触发回调 -->
+
+        <a v-on:click.once="doThis"></a>
+        <!-- click事件只能点击一次 -->
+      </div>
+
+
+      <div>
+        <p>input元素：</p>
+        <input v-model='message1' placeholder="编辑我......">
+        <p>消息是：{{message1}}</p>
+
+        <p>textarea 元素：</p>
+        <textarea v-model="message2" placeholder="多行文本输入"></textarea>
+        <p style="white-space: pre;"> {{ message2 }}</p>
+        <!-- input 和 textarea 元素中使用v-model 实现双向数据绑定 -->
+        <!-- v-model会根据控件类型自动选取正确的方法来更新元素 -->
+      </div>
+
+      
+      <div>
+        <!-- 复选框的双向数据绑定 -->
+        <p>单个复选框：</p>
+        <input type="checkbox" id="checkbox" v-model="checked">
+        <label for="checkbox"> {{ checked }}</label>
+
+        <p>多个复选框：</p>
+        <input type="checkbox" id="runoob" value="Runoob" v-model="checkedNames">
+        <label for="runoob">Runoob</label>
+        <input type="checkbox" id="google" value="Google" v-model="checkedNames">
+        <label for="google">Google</label>
+        <input type="checkbox" id="taobao" value="Taobao" v-model="checkedNames">
+        <label for="taobao">taobao</label>
+        <br>
+        <span>选择的值为：{{ checkedNames }}</span>
+        <!-- 复选框如果是一个则为逻辑值  如果是多个则绑定到同一个数组 -->
+      </div>
+
+
+      <div>
+        <input type="radio" id="runoob" value="Runoob" v-model="picked">
+        <label for="runoob">Runoob</label>
+        <br>
+        <input type="radio" id="google" value="Google" v-model="picked">
+        <label for="google">Google</label>
+        <br>
+        <span>选中值为：{{ picked }}</span>
+      </div>
+
+
+      <div>
+        <select v-model="selected" name="fruit">
+          <option value="">选择一个网站</option>
+          <option value="www.runoob.com">Runoob</option>
+          <option value="www.google.com">Google</option>
+        </select>
+        <div>选择的网站是：{{ selected }}</div>
+        <!-- 下拉列表的双向数据绑定 -->
+      </div>
+
+    </div>
+
+  <div id="app1">
+    <div>
+      <!-- 全局组件 -->
+      <runoob></runoob>
+    </div>
+
+
+    <div>
+      <!-- 局部组件 -->
+      <runoob></runoob>
+    </div>
+
+
+    <div>
+      <!-- prop是子组件用来接受父组件传递过来的数据的一个自定义属性 -->
+      <!-- 父组件的数据需要通过props把数据传给子组件，子组件需要显式地用props选项声明"prop" -->
+      <child message="hello!"></child>
+    </div>
+
+
+    <div>
+      <!-- 动态prop 类似于v-bind绑定html特性到一个表达式，也可以用来绑定props的值到父组件的数据中 -->
+      <input v-model="parentMsg">
+      <br>
+      <child v-bind:message="parentMsg"></child>
+      <!-- 父组件的数据变化时，该变化也会传导给子组件 -->
+    </div>
+
+
+    <div>
+      <!-- 用v-bind指令将todo传到每一个重复的组件中 -->
+      <ol>
+        <todo-item v-for="item in sites" v-bind:todo="item"></todo-item>
+        <!-- 被v-bind修饰的都是动态获取的值   item是一个表达式可以在其他地方动态变化 不代表其他任何意义 -->
+      </ol>
+      <!-- prop是单向绑定的：当父组件的属性变化时 将传导给子组件，但不会反过来 -->
+      <!-- prop验证的主要作用是在传入数据的时候对传入的值做判断 -->
+    </div>
+
+  </div>
+  </body>
+ <script>
+  //  注册一个全局组件的语法格式 Vue.component(tagName,options)  tagName为组件名 options为配置选项
+// 注册一个简单的全局组件runoob并使用它
+  Vue.component('runoob',{
+    template: '<h1>自定义组件</h1>'
+  })
+
+  Vue.component('child',{
+    //声明 props
+    props: ['message'],
+    //同样也可以在vm实列中像"this.message"这样使用
+    template: '<span> {{ message }} </span>'
+  })
+
+  var Child = {
+    template: '<h1>自定义组件2<h1>'
+  }
+
+  Vue.component('todo-item',{
+    props: ['todo'],
+    template: '<li>{{ todo.text }}</li>'
+  })
+
+//自定义组件中 创建根实例
+  new Vue({
+    el: '#app1',
+    data: {
+      parentMsg: '父组件内容',
+      sites: [
+        {text: 'Runoob'},
+        {text: 'Google'},
+        {text: 'Taobao'}
+      ]
+    },
+    components: {
+      // <runoob> 将只在父模板可用
+        'runoob': Child
+    }
+  })
+
+   var vm = new Vue({
+     el: '#app',   //该参数为DOM元素中的id
+     data: {    //用于定义属性 给属性定值
+       msg: 'hello vue',
+       titel: 'hhhhhhh',
+       url: 'www.baidu.com',
+       use: false,
+       seen: true,
+       counter: 1,
+       km: 0,
+       m: 0,
+       isActive: true,
+       hasError: true,
+       errorClass: 'text-danger',
+       activeClass: 'active',
+       activeColor: 'green',
+       fontSize: 30,
+       message1: 'Runoob',
+       message2: '菜鸟教程\r\nhttp://www.runoob.com',
+       checked: false,
+       checkedNames: [],
+       picked: 'Runoob',
+       selected: '',
+       styleObject: {
+          color: 'red',
+          fontSize: '30px'
+       },
+       overridingStyles: {
+          'font-weight': 'bold'
+       },
+       sites:[
+         {name: 'qwe'},
+         {name: 'asd'},
+         {name: 'zxc'}
+       ],
+       object: {
+          name: '菜鸟教程',
+          url: 'http://www.runoob.com',
+          slogan: '学的不仅仅是技术，更是梦想'
+       },
+       alexa: '10000'
+     },
+     methods: {    //用于定义的函数 通过return来返回函数值
+       details: function(){
+         return this.titel + "学的不仅仅是技术，更是梦想"
+       },
+       reverseMSg: function(){
+         this.msg = this.msg.split('').reverse().join('')
+       },
+       say: function(message){
+          alert(message)
+       }
+     },
+     computed: {
+
+     },
+     watch: {
+       km: function(val){
+         this.km = val;
+         this.m = this.km * 1000
+       },
+       m: function(val){
+         this.km = val/1000;
+         this.m = val
+       }
+     }
+   });
+
+   vm.$watch('km',function(newValue,oldValue){
+    //  $watch 是一个实例方法   这个回调将在vm.km 改变后调用
+     document.getElementById("info").innerHTML = "修改前："+oldValue+"修改后："+newValue;
+   })
+
+   vm.$watch('counter',function(nval,oval) {
+    // 监听点击事件  监听属性watch 通过watch来响应数据的变化
+     alert('计算器值的变化：'+oval+'变为'+nval);
+   })
+ </script>
+</html>
